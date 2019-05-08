@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Connection</title>
+</head>
+
+<body>
+
+</body>
+
+<script type="text/javascript">
+    var sse = new EventSource('http://localhost:9080/sse/connect?uid=1');
+
+    sse.onopen = function (evt) {
+        console.log("onopen : " + JSON.stringify(evt));
+    }
+
+    sse.onmessage = function (evt) {
+        console.log("onmessage : " + JSON.stringify(evt.data));
+    };
+
+    sse.onerror = function (evt) {
+        console.log("onerror : " + JSON.stringify(evt));
+    }
+</script>
+
+</html>
