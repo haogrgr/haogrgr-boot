@@ -13,15 +13,15 @@
     var sse = new EventSource('http://localhost:9080/sse/connect?uid=1');
 
     sse.onopen = function (evt) {
-        console.log("onopen : " + JSON.stringify(evt));
+        console.log(new Date() + " onopen : " + JSON.stringify(evt));
     }
 
     sse.onmessage = function (evt) {
-        console.log("onmessage : " + JSON.stringify(evt.data));
+        console.log(new Date() + " onmessage : " + JSON.stringify(evt.data));
     };
 
     sse.onerror = function (evt) {
-        console.log("onerror : " + JSON.stringify(evt));
+        console.log(new Date() + " onerror : " + JSON.stringify(evt));
     }
 </script>
 

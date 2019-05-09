@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -28,7 +29,7 @@ public class SseController {
     public SseEmitter connect(@RequestParam String uid) {
         System.out.println("connect emitter " + uid + " " + connections.size());
 
-        SseEmitter emitter = new SseEmitter(0L);
+        SseEmitter emitter = new SseEmitter(180_000L);
         connections.add(emitter);
         emitter.onCompletion(new RemoveConnectionHandler(emitter));
         emitter.onTimeout(new RemoveConnectionHandler(emitter));
@@ -49,9 +50,13 @@ public class SseController {
         String msg = "event : " + event + " " + inc.getAndIncrement();
         for (SseEmitter e : connections) {
             try {
-                e.send(msg);
+                e.send(SseEmitter.event()
+                    .id(Objects.toString(inc.get()))
+                    .reconnectTime(100L)
+                    .data(msg));
             } catch (Exception exp) {
                 System.out.println("push error : " + exp.getMessage());
+                new RemoveConnectionHandler(e).run();
             }
         }
 
